@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Individual Project</string>
     <string name="title_activity_splash">splashActivity</string>
+    <string name="title_activity_navbar">Navbar</string>
+    <string name="title_activity_add_product">AddProductActivity</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+    <string name="title_activity_forget_password">ForgetPasswordActivity</string>
 </resources>
