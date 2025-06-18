@@ -1,5 +1,7 @@
 package com.example.individualproject.viewmodel
 
+import android.content.Context
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +9,9 @@ import com.example.individualproject.model.ProductModel
 import com.example.individualproject.repository.ProductRepository
 
 class ProductViewModel(val repo : ProductRepository): ViewModel() {
+    fun uploadImage(context: Context,imageUri: Uri, callback: (String?) -> Unit){
+        repo.uploadImage(context,imageUri,callback)
+    }
     fun addProduct(model: ProductModel,
                    callback: (Boolean, String)-> Unit){
         repo.addProduct(model,callback)
@@ -46,6 +51,20 @@ class ProductViewModel(val repo : ProductRepository): ViewModel() {
             }
         }
     }
+    private var _loading= MutableLiveData<Boolean>()
+    var loading = MutableLiveData<Boolean>()
+        get() = _loading
 
-    fun getAllProduct(){}
+    fun getAllProduct(){
+        _loading.postValue(true)
+        repo.getAllProduct{ success, msg, data->
+            if (success){
+                _loading.postValue(false)
+                _allProducts.postValue(data)
+            }else{
+                _loading.postValue(false)
+                _allProducts.postValue(emptyList())
+            }
+        }
+    }
 }

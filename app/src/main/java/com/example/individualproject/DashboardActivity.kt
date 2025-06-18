@@ -3,6 +3,7 @@ package com.example.individualproject
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,8 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +58,7 @@ fun DashboardBody() {
     val activity = context as? Activity
 
     val products = viewModel.allProducts.observeAsState(initial = emptyList())
+    val loading=viewModel.loading.observeAsState(initial=true)
 
     LaunchedEffect(Unit) {
         viewModel.getAllProduct()
@@ -74,6 +78,9 @@ fun DashboardBody() {
         }
     ) { innerPadding ->
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
+            if (loading.value){
+                item { CircularProgressIndicator()  }
+            }else{+
             items (products.value.size){ index->
                 val eachProduct = products.value[index]
                 Card (modifier = Modifier.fillMaxWidth()){
@@ -91,14 +98,23 @@ fun DashboardBody() {
                                 Icon(Icons.Default.Edit, contentDescription = null)
                             }
 
-                            IconButton(onClick = {}, colors = IconButtonDefaults.iconButtonColors(
+                            IconButton(onClick = {viewModel.deleteProduct(eachProduct?.productId.toString()){
+                                    success, message->
+                                if (success){
+                                    Toast.makeText(context,message, Toast.LENGTH_LONG)
+                                        .show()
+                                }else{
+                                    Toast.makeText(context,message, Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }}, colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = Color.Red
-                            )) { }
+                            )) {Icon(Icons.Default.Delete,contentDescription = null) }
                         }
                     }
 
                 }
-            }
+            }}
 
         }
     }

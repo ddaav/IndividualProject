@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
     <application
+        tools:replace="android:fullBackupContent"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,6 +16,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IndividualProject"
         tools:targetApi="31">
+        <activity
+            android:name=".UpdateProductActivity"
+            android:exported="true"
+            android:label="@string/title_activity_update_product"
+            android:theme="@style/Theme.IndividualProject">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ForgetPasswordActivity"
             android:exported="true"
@@ -67,17 +82,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Navbar"
-            android:exported="true"
-            android:label="@string/title_activity_navbar"
-            android:theme="@style/Theme.IndividualProject">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".splashActivity"
             android:exported="true"
@@ -86,7 +91,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                                                                                        <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity

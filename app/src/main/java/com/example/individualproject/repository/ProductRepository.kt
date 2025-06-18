@@ -1,5 +1,7 @@
 package com.example.individualproject.repository
 
+import android.content.Context
+import android.net.Uri
 import com.example.individualproject.model.ProductModel
 
 interface ProductRepository {
@@ -37,4 +39,7 @@ interface ProductRepository {
     //present - true
     //absent - false
 //    fun attendance(name:String,callback: (Boolean) -> Unit)
+    fun uploadImage(context: Context,imageUri: Uri, callback: (String?) -> Unit)
+
+    fun getFileNameFromUri(context: Context,uri: Uri): String?
 }
