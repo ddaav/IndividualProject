@@ -179,7 +179,7 @@ fun Home3() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Green)
+
     ) {
     }
 }
