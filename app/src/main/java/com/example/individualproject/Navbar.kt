@@ -419,5 +419,5 @@ fun ProductCard(product: Product) {
 @Preview(showBackground = true)
 @Composable
 fun NavigationPreview() {
-
+    NavigationBody()
 }
