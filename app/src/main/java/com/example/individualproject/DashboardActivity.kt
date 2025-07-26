@@ -80,7 +80,7 @@ fun DashboardBody() {
         LazyColumn(modifier = Modifier.padding(innerPadding)) {
             if (loading.value){
                 item { CircularProgressIndicator()  }
-            }else{+
+            }else{
             items (products.value.size){ index->
                 val eachProduct = products.value[index]
                 Card (modifier = Modifier.fillMaxWidth()){

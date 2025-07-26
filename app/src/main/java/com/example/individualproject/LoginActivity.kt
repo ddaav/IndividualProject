@@ -24,7 +24,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -36,6 +35,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,7 +51,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.individualproject.R
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
@@ -60,40 +59,37 @@ class LoginActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LoginBody()
-
         }
     }
 }
 
 @Composable
 fun LoginBody() {
-//    var counter : Int = 0
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
 
-
     val context = LocalContext.current
     val activity = context as Activity
-
 
     val sharedPreferences = context.getSharedPreferences("User", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
 
-    val localEmail : String = sharedPreferences.getString("email","").toString()
-    val localPassword : String = sharedPreferences.getString("password","").toString()
-
-    email = localEmail
-    password = localPassword
-
-
-    val couroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    var showDialog by remember { mutableStateOf(false) }
+    // Load saved credentials when the composable is first created
+    LaunchedEffect(Unit) {
+        val savedEmail = sharedPreferences.getString("email", "") ?: ""
+        val savedPassword = sharedPreferences.getString("password", "") ?: ""
 
+        if (savedEmail.isNotEmpty()) {
+            email = savedEmail
+            password = savedPassword
+            rememberMe = true
+        }
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -105,37 +101,6 @@ fun LoginBody() {
                 .background(color = Color.White),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Trigger to show the dialog
-            Button(onClick = { showDialog = true }) {
-                Text("Show AlertDialog")
-            }
-
-            if (showDialog) {
-                AlertDialog(
-                    onDismissRequest = {
-                        showDialog = false
-                    }, // dismiss when clicked outside
-                    confirmButton = {
-                        Button(onClick = {
-                            // Confirm action
-                            showDialog = false
-                        }) {
-                            Text("OK")
-                        }
-                    },
-                    dismissButton = {
-                        Button(onClick = {
-                            // Cancel action
-                            showDialog = false
-                        }) {
-                            Text("Cancel")
-                        }
-                    },
-                    title = { Text(text = "Alert Title") },
-                    text = { Text("This is an alert dialog message.") }
-                )
-            }
-
             Spacer(modifier = Modifier.height(50.dp))
 
             Image(
@@ -147,16 +112,11 @@ fun LoginBody() {
 
             OutlinedTextField(
                 value = email,
-                onValueChange = {
-                    email = it
-                },
+                onValueChange = { email = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
-                placeholder = {
-                    Text(text = "Enter email")
-                },
-                //            minLines = 4,
+                placeholder = { Text(text = "Enter email") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Gray.copy(alpha = 0.2f),
                     focusedIndicatorColor = Color.Green,
@@ -164,7 +124,7 @@ fun LoginBody() {
                     unfocusedIndicatorColor = Color.Blue
                 ),
                 shape = RoundedCornerShape(12.dp),
-                prefix = {
+                leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = null)
                 },
                 keyboardOptions = KeyboardOptions(
@@ -173,17 +133,14 @@ fun LoginBody() {
             )
 
             Spacer(modifier = Modifier.height(20.dp))
+
             OutlinedTextField(
                 value = password,
-                onValueChange = {
-                    password = it
-                },
+                onValueChange = { password = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
-                placeholder = {
-                    Text(text = "Enter password")
-                },
+                placeholder = { Text(text = "Enter password") },
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Gray.copy(alpha = 0.2f),
                     focusedIndicatorColor = Color.Green,
@@ -191,26 +148,23 @@ fun LoginBody() {
                     unfocusedIndicatorColor = Color.Blue
                 ),
                 shape = RoundedCornerShape(12.dp),
-                prefix = {
+                leadingIcon = {
                     Icon(Icons.Default.Lock, contentDescription = null)
                 },
-
-                suffix = {
+                trailingIcon = {
                     Icon(
                         painterResource(
-                            if (passwordVisibility) R.drawable.baseline_remove_red_eye_24 else
-                                R.drawable.baseline_visibility_off_24
+                            if (passwordVisibility) R.drawable.baseline_remove_red_eye_24
+                            else R.drawable.baseline_visibility_off_24
                         ),
                         contentDescription = null,
                         modifier = Modifier.clickable {
-                            //2
                             passwordVisibility = !passwordVisibility
-
                         }
                     )
                 },
-
-                visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisibility) VisualTransformation.None
+                else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
                 )
@@ -232,48 +186,50 @@ fun LoginBody() {
                             checkmarkColor = Color.White
                         ),
                         checked = rememberMe,
-                        onCheckedChange = {
-                            rememberMe = it
-                        }
+                        onCheckedChange = { rememberMe = it }
                     )
                     Text("Remember me")
                 }
 
-                Text("Forget Password?")
+                Text(
+                    "Forgot Password?",
+                    modifier = Modifier.clickable {
+                        // Handle forgot password
+                        Toast.makeText(context, "Forgot password clicked", Toast.LENGTH_SHORT).show()
+                    }
+                )
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = {
-                    if (email == "ram@gmail.com"
-                        && password == "password"
-                    ) {
-
-                        if(rememberMe){
-                            editor.putString("email",email)
-                            editor.putString("password",password)
+                    if (email == "ram@gmail.com" && password == "password") {
+                        // Save credentials if remember me is checked
+                        if (rememberMe) {
+                            editor.putString("email", email)
+                            editor.putString("password", password)
+                            editor.apply()
+                        } else {
+                            // Clear saved credentials if remember me is unchecked
+                            editor.clear()
                             editor.apply()
                         }
-                        val intent = Intent(context, RegistrationActivity::class.java)
 
-                        //to pass data to another activity
-                        intent.putExtra("email",email)
-                        intent.putExtra("password",password)
-
+                        // Navigate to Dashboard (corrected navigation)
+                        val intent = Intent(context, DashboardActivity::class.java)
+                        intent.putExtra("email", email)
                         context.startActivity(intent)
-
                         activity.finish()
 
-                        Toast.makeText(
-                            context, "Login success",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
                     } else {
-                        //snackbar
-                        couroutineScope.launch {
-                            snackbarHostState.showSnackbar("Invalid login")
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Invalid email or password")
                         }
                     }
-                }, modifier = Modifier
+                },
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp),
                 shape = RoundedCornerShape(10.dp)
@@ -281,14 +237,13 @@ fun LoginBody() {
                 Text("Login")
             }
 
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                "Don't have an account, Signup",
+                "Don't have an account? Sign up",
                 modifier = Modifier.clickable {
                     val intent = Intent(context, RegistrationActivity::class.java)
                     context.startActivity(intent)
-
-                    //to destroy activity
                     activity.finish()
                 }
             )
