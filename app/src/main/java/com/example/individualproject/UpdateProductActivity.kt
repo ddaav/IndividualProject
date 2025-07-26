@@ -133,7 +133,7 @@ fun UpdateProductBody() {
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Update Product")
+
                 }
             }
             }
