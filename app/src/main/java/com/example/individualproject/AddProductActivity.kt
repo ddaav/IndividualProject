@@ -349,6 +349,6 @@ fun AddProductBody(
 fun AddProductBodyPreview() {
     AddProductBody(
         selectedImageUri = null,
-
+        onPickImage = {}
     )
 }
