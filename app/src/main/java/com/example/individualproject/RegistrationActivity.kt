@@ -227,5 +227,5 @@ fun RegBody(innerPaddingValues: PaddingValues) {
 @Preview
 @Composable
 fun RegPreview() {
-    RegBody(innerPaddingValues = PaddingValues(0.dp))
+
 }
