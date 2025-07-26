@@ -84,14 +84,13 @@
         </activity>
 
         <activity
-            android:name=".splashActivity"
+            android:name="com.example.individualproject.SplashActivity"
             android:exported="true"
-            android:label="@string/title_activity_splash"
+            android:label="SplashActivity"
             android:theme="@style/Theme.IndividualProject">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                                                                                        <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
