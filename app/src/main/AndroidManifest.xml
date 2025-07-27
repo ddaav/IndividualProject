@@ -104,6 +104,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Edit Product Activity - ADD THIS -->
+        <activity
+            android:name=".EditProductActivity"
+            android:exported="false"
+            android:theme="@style/Theme.IndividualProject"
+            android:screenOrientation="fullSensor"
+            android:parentActivityName=".MainActivity">
+            <!-- Add a back button in the action bar -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>
