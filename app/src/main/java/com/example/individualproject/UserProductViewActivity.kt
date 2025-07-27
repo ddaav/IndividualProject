@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +58,6 @@ fun UserProductViewBody() {
     val cartRepo = remember { CartRepositoryImpl() }
     val cartViewModel = remember { CartViewModel(cartRepo) }
 
-    // ✅ Instantiate UserViewModel for logout
     val userRepo = remember { UserRepositoryImpl() }
     val userViewModel = remember { UserViewModel(userRepo) }
 
@@ -81,8 +81,13 @@ fun UserProductViewBody() {
                     titleContentColor = MaterialTheme.colorScheme.onPrimary,
                     actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                // ✅ Add logout action
                 actions = {
+                    IconButton(onClick = {
+                        context.startActivity(Intent(context, CartActivity::class.java))
+                    }) {
+                        Icon(Icons.Default.ShoppingCart, contentDescription = "Shopping Cart")
+                    }
+
                     IconButton(onClick = {
                         userViewModel.logout { success, message ->
                             if (success) {
@@ -142,7 +147,7 @@ fun UserProductViewBody() {
         }
     }
 }
-// UserProductCard Composable remains the same
+
 @Composable
 fun UserProductCard(product: ProductModel, onAddToCart: () -> Unit) {
     Card(

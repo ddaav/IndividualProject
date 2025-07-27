@@ -110,13 +110,13 @@ fun NavigationBody() {
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* TODO: Handle search */ }) {
+                    IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "Shopping Cart"
                         )
                     }
-                    IconButton(onClick = { /* TODO: Handle settings */ }) {
+                    IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
@@ -124,7 +124,7 @@ fun NavigationBody() {
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* TODO: Handle menu */ }) {
+                    IconButton(onClick = { }) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menu"

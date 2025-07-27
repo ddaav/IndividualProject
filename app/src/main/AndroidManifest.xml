@@ -18,7 +18,7 @@
         android:theme="@style/Theme.IndividualProject"
         tools:targetApi="31">
 
-        <!-- Splash Screen: The main entry point of the app -->
+
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Other activities, not exported -->
+
         <activity
             android:name=".LoginActivity"
             android:exported="false"
@@ -62,7 +62,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.IndividualProject" />
 
-        <!-- Correctly declared EditProductActivity -->
+
         <activity
             android:name=".EditProductActivity"
             android:exported="false"
@@ -70,7 +70,7 @@
             android:theme="@style/Theme.IndividualProject"
             android:screenOrientation="fullSensor"
             android:parentActivityName=".DashboardActivity">
-            <!-- This meta-data tag is for supporting back navigation on older API levels -->
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DashboardActivity" />
@@ -80,6 +80,13 @@
             android:name=".UserProductViewActivity"
             android:exported="false"
             android:label="@string/title_activity_user_product_view"
+            android:theme="@style/Theme.IndividualProject" />
+
+
+        <activity
+            android:name=".CartActivity"
+            android:exported="false"
+            android:label="Shopping Cart"
             android:theme="@style/Theme.IndividualProject" />
 
     </application>

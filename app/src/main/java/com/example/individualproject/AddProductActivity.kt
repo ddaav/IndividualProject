@@ -127,7 +127,7 @@ fun AddProductBody(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                // Image Selection Section
+
                 Text(
                     text = "Product Image",
                     style = MaterialTheme.typography.titleMedium,
@@ -182,7 +182,7 @@ fun AddProductBody(
             }
 
             item {
-                // Product Name
+
                 Text(
                     text = "Product Name",
                     style = MaterialTheme.typography.titleMedium,
@@ -199,7 +199,7 @@ fun AddProductBody(
             }
 
             item {
-                // Product Description
+
                 Text(
                     text = "Product Description",
                     style = MaterialTheme.typography.titleMedium,
@@ -218,7 +218,7 @@ fun AddProductBody(
             }
 
             item {
-                // Product Price
+
                 Text(
                     text = "Product Price",
                     style = MaterialTheme.typography.titleMedium,
@@ -232,7 +232,7 @@ fun AddProductBody(
                     placeholder = { Text("Enter price (e.g., 29.99)") },
                     value = productPrice,
                     onValueChange = {
-                        // Only allow numbers and decimal point
+
                         if (it.isEmpty() || it.matches(Regex("^\\d*\\.?\\d*$"))) {
                             productPrice = it
                         }
@@ -244,10 +244,10 @@ fun AddProductBody(
             item {
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Submit Button
+
                 Button(
                     onClick = {
-                        // Basic validation
+
                         if (productName.isBlank()) {
                             Toast.makeText(context, "Please enter product name", Toast.LENGTH_SHORT).show()
                             return@Button
@@ -284,7 +284,7 @@ fun AddProductBody(
                                     Log.d("AddProduct", "Image uploaded successfully: $imageUrl")
 
                                     val model = ProductModel(
-                                        productName = productName.trim(), // Let backend generate ID
+                                        productName = productName.trim(),
                                         productPrice = price,
                                         productDesc = productDescription.trim(),
                                         productImage = imageUrl

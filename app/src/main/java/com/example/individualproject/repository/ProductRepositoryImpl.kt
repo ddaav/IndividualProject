@@ -35,7 +35,7 @@ class ProductRepositoryImpl : ProductRepository{
                 val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
                 var fileName = getFileNameFromUri(context, imageUri)
 
-                // ✅ Fix: Remove extensions from file name before upload
+
                 fileName = fileName?.substringBeforeLast(".") ?: "uploaded_image"
 
                 val response = cloudinary.uploader().upload(
@@ -49,7 +49,7 @@ class ProductRepositoryImpl : ProductRepository{
 
                 imageUrl = imageUrl?.replace("http://", "https://")
 
-                // ✅ Run UI updates on the Main Thread
+
                 Handler(Looper.getMainLooper()).post {
                     callback(imageUrl)
                 }

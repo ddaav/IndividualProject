@@ -17,7 +17,7 @@ class UserRepositoryImpl : UserRepository {
     val database : FirebaseDatabase= FirebaseDatabase.getInstance()
     val ref : DatabaseReference = database.reference.child("users")
 
-    // ... login, register, etc. remain the same ...
+
     override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
         auth.signInWithEmailAndPassword(email,password)
             .addOnCompleteListener {
@@ -81,19 +81,19 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override suspend fun getUserByID(UserID: String): UserModel? {
-        // This is a coroutine that will suspend until the Firebase callback is received.
+
         return suspendCancellableCoroutine { continuation ->
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val user = snapshot.getValue(UserModel::class.java)
-                    // When data is received, resume the coroutine with the user object.
+
                     if (continuation.isActive) {
                         continuation.resume(user)
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // If there's an error, resume with null.
+
                     if (continuation.isActive) {
                         continuation.resume(null)
                     }
@@ -101,7 +101,7 @@ class UserRepositoryImpl : UserRepository {
             }
             ref.child(UserID).addListenerForSingleValueEvent(listener)
 
-            // If the coroutine is cancelled, remove the listener.
+
             continuation.invokeOnCancellation {
                 ref.child(UserID).removeEventListener(listener)
             }

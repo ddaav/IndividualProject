@@ -52,24 +52,19 @@ fun SplashBody() {
 
 
     DisposableEffect(Unit) {
-        // This listener fires when the auth state is confirmed.
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
-            // Use a coroutine to perform the user data fetch and navigation.
             scope.launch {
                 val user = auth.currentUser
                 if (user != null) {
-                    // Case 1: A user IS logged in. Fetch their role.
                     val userModel = viewModel.getUserById(user.uid)
 
                     if (userModel == null) {
-                        // Error case: User in Auth but not DB. Force login.
                         Toast.makeText(context, "Could not find user data.", Toast.LENGTH_SHORT).show()
                         context.startActivity(Intent(context, LoginActivity::class.java))
                         activity?.finish()
                         return@launch
                     }
 
-                    // Navigate based on the fetched role.
                     val intent = if (userModel.role.equals("Admin", ignoreCase = true)) {
                         Intent(context, DashboardActivity::class.java)
                     } else {
@@ -79,18 +74,14 @@ fun SplashBody() {
                     activity?.finish()
 
                 } else {
-                    // Case 2: NO user is logged in. Go to LoginActivity.
                     context.startActivity(Intent(context, LoginActivity::class.java))
                     activity?.finish()
                 }
             }
         }
 
-        // Add the listener to Firebase Auth
         firebaseAuth.addAuthStateListener(authStateListener)
 
-        // onDispose is called when the composable is removed from the screen.
-        // This is crucial to prevent memory leaks.
         onDispose {
             firebaseAuth.removeAuthStateListener(authStateListener)
         }

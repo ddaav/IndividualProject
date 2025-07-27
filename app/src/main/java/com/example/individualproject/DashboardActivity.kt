@@ -51,7 +51,7 @@ fun DashboardBody() {
     val productRepo = remember { ProductRepositoryImpl() }
     val productViewModel = remember { ProductViewModel(productRepo) }
 
-    // ✅ Instantiate UserViewModel for logout
+
     val userRepo = remember { UserRepositoryImpl() }
     val userViewModel = remember { UserViewModel(userRepo) }
 
@@ -68,7 +68,7 @@ fun DashboardBody() {
     }
 
     Scaffold(
-        // ✅ Add TopAppBar for the title and logout button
+
         topBar = {
             TopAppBar(
                 title = { Text("Admin Dashboard", fontWeight = FontWeight.Bold) },
@@ -157,7 +157,7 @@ fun DashboardBody() {
     }
 }
 
-// ProductCard Composable remains the same
+
 @Composable
 fun ProductCard(
     product: ProductModel,
@@ -231,4 +231,6 @@ fun ProductCard(
             }
         }
     }
+
+
 }

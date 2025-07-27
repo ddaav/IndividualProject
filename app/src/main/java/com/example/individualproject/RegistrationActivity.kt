@@ -130,7 +130,6 @@ fun RegBody(innerPaddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Country Dropdown
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = selectedCountry,
@@ -168,7 +167,6 @@ fun RegBody(innerPaddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // ✅ Role Dropdown
         Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = selectedRole,
@@ -222,15 +220,15 @@ fun RegBody(innerPaddingValues: PaddingValues) {
                         email,
                         firstName,
                         lastname,
-                        "Male", // Assuming Male for now
+                        "Male",
                         selectedCountry,
-                        selectedRole // ✅ Pass the selected role
+                        selectedRole
                     )
                     userViewModel.addUserToDatabase(userId,userModel){
                             successDb, messageDb ->
                         if (successDb){
                             Toast.makeText(context, "Registration Successful", Toast.LENGTH_LONG).show()
-                            activity?.finish() // Go back to login screen
+                            activity?.finish()
                         }else{
                             Toast.makeText(context, messageDb, Toast.LENGTH_SHORT).show()
                         }

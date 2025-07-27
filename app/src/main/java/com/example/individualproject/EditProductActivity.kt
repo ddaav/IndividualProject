@@ -88,7 +88,7 @@ class EditProductActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Get product data from intent
+
         productId = intent.getStringExtra(EXTRA_PRODUCT_ID)
         val productName = intent.getStringExtra(EXTRA_PRODUCT_NAME) ?: ""
         val productPrice = intent.getDoubleExtra(EXTRA_PRODUCT_PRICE, 0.0)
@@ -121,7 +121,7 @@ class EditProductActivity : ComponentActivity() {
     }
 }
 
-// Data class for edit form state management
+
 data class EditProductFormState(
     val productName: String = "",
     val productPrice: String = "",
@@ -162,7 +162,7 @@ fun EditProductBody(
     val activity = context as? Activity
     val focusManager = LocalFocusManager.current
 
-    // Validation functions
+
     fun validateForm(): Boolean {
         var isValid = true
         var newFormState = formState
@@ -218,7 +218,7 @@ fun EditProductBody(
 
         val price = formState.productPrice.toDouble()
 
-        // If new image is selected, upload it first
+
         if (selectedImageUri != null) {
             viewModel.uploadImage(context, selectedImageUri) { imageUrl ->
                 if (imageUrl != null) {
@@ -293,7 +293,7 @@ fun EditProductBody(
         }
     }
 
-    // Delete confirmation dialog
+
     if (formState.showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { formState = formState.copy(showDeleteDialog = false) },
@@ -357,7 +357,7 @@ fun EditProductBody(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Image Selection Section
+
             EditImageSelectionSection(
                 currentImageUrl = initialProductImage,
                 selectedImageUri = selectedImageUri,
@@ -365,7 +365,7 @@ fun EditProductBody(
                 onRemoveNewImage = onRemoveNewImage
             )
 
-            // Product Name
+
             EditProductTextField(
                 label = "Product Name",
                 value = formState.productName,
@@ -376,7 +376,7 @@ fun EditProductBody(
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
             )
 
-            // Product Description
+
             EditProductTextField(
                 label = "Product Description",
                 value = formState.productDescription,
@@ -389,7 +389,7 @@ fun EditProductBody(
                 keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
             )
 
-            // Product Price
+
             EditProductTextField(
                 label = "Product Price",
                 value = formState.productPrice,
@@ -413,11 +413,11 @@ fun EditProductBody(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Action Buttons
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Update Button
+
                 Button(
                     onClick = { handleUpdate() },
                     modifier = Modifier
@@ -443,7 +443,7 @@ fun EditProductBody(
                     }
                 }
 
-                // Delete Button
+
                 OutlinedButton(
                     onClick = { formState = formState.copy(showDeleteDialog = true) },
                     modifier = Modifier
@@ -523,7 +523,7 @@ fun EditImageSelectionSection(
                         interactionSource = remember { MutableInteractionSource() }
                     ) { onPickImage() }
             ) {
-                // Show new selected image or current image
+
                 val imageToShow = selectedImageUri ?: currentImageUrl
 
                 if (imageToShow.toString().isNotEmpty()) {
@@ -534,7 +534,7 @@ fun EditImageSelectionSection(
                         contentScale = ContentScale.Crop
                     )
 
-                    // Show remove button only for newly selected image
+
                     if (selectedImageUri != null) {
                         IconButton(
                             onClick = onRemoveNewImage,
@@ -551,7 +551,7 @@ fun EditImageSelectionSection(
                         }
                     }
 
-                    // Change image overlay
+
                     Box(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)

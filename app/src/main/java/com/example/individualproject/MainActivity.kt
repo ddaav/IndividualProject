@@ -63,7 +63,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // App Title
         Text(
             text = "Welcome Back",
             fontSize = 28.sp,
@@ -81,7 +80,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        // Email Field
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -94,7 +92,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Password Field
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -108,7 +105,6 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Forgot Password Link
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
@@ -125,10 +121,9 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Login Button
         Button(
             onClick = {
-                // TODO: Implement login logic
+
             },
             modifier = Modifier.fillMaxWidth(),
             enabled = email.isNotEmpty() && password.isNotEmpty()
@@ -138,12 +133,11 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Register Link
         Row {
             Text("Don't have an account? ")
             TextButton(
                 onClick = {
-                    // TODO: Navigate to registration screen
+
                 }
             ) {
                 Text("Sign Up")

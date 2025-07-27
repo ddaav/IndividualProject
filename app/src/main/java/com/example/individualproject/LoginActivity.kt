@@ -36,7 +36,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -88,7 +87,6 @@ fun LoginBody() {
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Load saved credentials when the composable is first created
     LaunchedEffect(Unit) {
         val savedEmail = sharedPreferences.getString("email", "") ?: ""
         val savedPassword = sharedPreferences.getString("password", "") ?: ""
@@ -112,10 +110,11 @@ fun LoginBody() {
         ) {
             Spacer(modifier = Modifier.height(50.dp))
 
-            Image(
-                painter = painterResource(R.drawable.photo),
-                contentDescription = null
-            )
+
+             Image(
+                 painter = painterResource(R.drawable.photo),
+                 contentDescription = null
+             )
 
             Spacer(modifier = Modifier.height(40.dp))
 
@@ -187,53 +186,6 @@ fun LoginBody() {
                         checked = rememberMe,
                         onCheckedChange = { rememberMe = it }
                     )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     Text("Remember me")
                 }
 
@@ -253,22 +205,41 @@ fun LoginBody() {
                 onClick = {
                     isLoading = true
                     viewModel.login(email, password) { success, message ->
-                        isLoading = false
                         if (success) {
-                            if (rememberMe) {
-                                editor.putString("email", email)
-                                editor.putString("password", password) // Note: storing password is not recommended
-                                editor.apply()
-                            } else {
-                                editor.clear()
-                                editor.apply()
+                            coroutineScope.launch {
+                                // 1. Get the current user's ID
+                                val firebaseUser = viewModel.getCurrentUser()
+                                if (firebaseUser == null) {
+                                    isLoading = false
+                                    Toast.makeText(context, "Could not get user session.", Toast.LENGTH_SHORT).show()
+                                    return@launch
+                                }
+
+                                val userModel = viewModel.getUserById(firebaseUser.uid)
+
+                                if (rememberMe) {
+                                    editor.putString("email", email)
+                                    editor.putString("password", password)
+                                    editor.apply()
+                                } else {
+                                    editor.clear()
+                                    editor.apply()
+                                }
+
+                                Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
+
+                                val intent = if (userModel?.role.equals("Admin", ignoreCase = true)) {
+                                    Intent(context, DashboardActivity::class.java)
+                                } else {
+                                    Intent(context, UserProductViewActivity::class.java)
+                                }
+                                context.startActivity(intent)
+                                activity.finish()
+                                isLoading = false
                             }
 
-                            Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(context, DashboardActivity::class.java)
-                            context.startActivity(intent)
-                            activity.finish()
                         } else {
+                            isLoading = false
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(message)
                             }
@@ -305,10 +276,4 @@ fun LoginBody() {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewLogin() {
-    LoginBody()
 }
