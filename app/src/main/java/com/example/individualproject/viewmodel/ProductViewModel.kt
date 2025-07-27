@@ -18,11 +18,10 @@ class ProductViewModel(val repo : ProductRepository): ViewModel() {
     }
 
     fun updateProduct(
-        productId: String,
-        data: MutableMap<String, Any?>,
+        model: ProductModel,
         callback: (Boolean, String) -> Unit
     ){
-        repo.updateProduct(productId,data,callback)
+        repo.updateProduct(model,callback)
     }
 
 

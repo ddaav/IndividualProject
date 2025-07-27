@@ -1,6 +1,8 @@
 package com.example.individualproject
 
+import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,7 +15,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -26,13 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.text.KeyboardOptions
+import com.example.individualproject.repository.UserRepositoryImpl
+import com.example.individualproject.viewmodel.UserViewModel
 
 class ForgetPasswordActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +57,12 @@ class ForgetPasswordActivity : ComponentActivity() {
 fun ForgetBody(innerPaddingValues: PaddingValues) {
     var email by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    var message by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    val repo = remember { UserRepositoryImpl() }
+    val viewModel = remember { UserViewModel(repo) }
 
     Column(
         modifier = Modifier
@@ -61,7 +73,6 @@ fun ForgetBody(innerPaddingValues: PaddingValues) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Title
         Text(
             text = "Forgot Password?",
             fontSize = 24.sp,
@@ -71,7 +82,6 @@ fun ForgetBody(innerPaddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Description
         Text(
             text = "Enter your email address and we'll send you a link to reset your password.",
             fontSize = 16.sp,
@@ -82,7 +92,6 @@ fun ForgetBody(innerPaddingValues: PaddingValues) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Email input field
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -90,41 +99,38 @@ fun ForgetBody(innerPaddingValues: PaddingValues) {
             placeholder = { Text("abc@gmail.com") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            enabled = !isLoading
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Reset button
         Button(
             onClick = {
-                if (email.isNotEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                if (email.isNotBlank() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     isLoading = true
-                    message = ""
-                    // TODO: Implement password reset logic here
-                    // For now, just simulate success
-                    message = "Password reset link sent to $email"
-                    isLoading = false
+                    viewModel.forgetPassword(email) { success, message ->
+                        isLoading = false
+                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        if (success) {
+                            activity?.finish()
+                        }
+                    }
                 } else {
-                    message = "Please enter a valid email address"
+                    Toast.makeText(context, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().height(50.dp),
             enabled = !isLoading && email.isNotEmpty()
         ) {
-            Text(if (isLoading) "Sending..." else "Send Reset Link")
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Message display
-        if (message.isNotEmpty()) {
-            Text(
-                text = message,
-                color = if (message.contains("sent")) Color.Green else Color.Red,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            } else {
+                Text("Send Reset Link")
+            }
         }
     }
 }

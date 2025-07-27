@@ -5,6 +5,5 @@ data class ProductModel(
     var productName: String = "",
     var productPrice: Double = 0.0,
     var productDesc: String = "",
-    var image: String = "",
-    val productImage: String,
+    var productImage: String = "",
 )

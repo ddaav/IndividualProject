@@ -25,6 +25,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
@@ -76,23 +78,28 @@ fun RegBody(innerPaddingValues: PaddingValues) {
     val context = LocalContext.current
     val activity = context as? Activity
 
-
-
     var firstName by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var lastname by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
+    var expandedCountry by remember { mutableStateOf(false) }
+    var expandedRole by remember { mutableStateOf(false) }
 
-    var selectedOptionText by remember { mutableStateOf("Select Option") }
+    var selectedCountry by remember { mutableStateOf("Select Country") }
+    var selectedRole by remember { mutableStateOf("Normal") }
 
-    val options = listOf("Nepal", "India", "China")
+    val countries = listOf("Nepal", "India", "China")
+    val roles = listOf("Normal", "Admin")
 
-    var textFieldSize by remember { mutableStateOf(Size.Zero) } // to capture textfield size
+    var countryTextFieldSize by remember { mutableStateOf(Size.Zero) }
+    var roleTextFieldSize by remember { mutableStateOf(Size.Zero) }
+
     Column(
         modifier = Modifier
-            .padding(innerPaddingValues).padding(horizontal = 10.dp)
+            .padding(innerPaddingValues)
+            .padding(horizontal = 10.dp)
             .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Make it scrollable
             .background(color = Color.White)
     ) {
         Spacer(modifier = Modifier.height(50.dp))
@@ -101,78 +108,96 @@ fun RegBody(innerPaddingValues: PaddingValues) {
         ) {
             OutlinedTextField(
                 value = firstName,
-                onValueChange = {
-                    firstName = it
-                },
-                placeholder = {
-                    Text("Firstname")
-                },
+                onValueChange = { firstName = it },
+                placeholder = { Text("Firstname") },
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(10.dp))
             OutlinedTextField(
                 value = lastname,
-                onValueChange = {
-                    lastname = it
-                },
-                placeholder = {
-                    Text("Lastname")
-                },
+                onValueChange = { lastname = it },
+                placeholder = { Text("Lastname") },
                 modifier = Modifier.weight(1f)
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             value = email,
-            onValueChange = {
-                email = it
-            },
-            placeholder = {
-                Text("abc@gmail.com")
-            },
+            onValueChange = { email = it },
+            placeholder = { Text("abc@gmail.com") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()) {
+
+        // Country Dropdown
+        Box(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
-                value = selectedOptionText,
+                value = selectedCountry,
                 onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .onGloballyPositioned { coordinates ->
-                        // capture the size of the TextField
-                        textFieldSize = coordinates.size.toSize()
+                        countryTextFieldSize = coordinates.size.toSize()
                     }
-                    .clickable { expanded = true },
+                    .clickable { expandedCountry = true },
                 placeholder = { Text("Select Country") },
-                enabled = false, // prevent manual typing
+                enabled = false,
                 colors = TextFieldDefaults.colors(
-                    disabledIndicatorColor = Color.Gray,
                     disabledContainerColor = Color.White,
+                    disabledTextColor = Color.Black
                 ),
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = null
-                    )
-                }
+                trailingIcon = { Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null) }
             )
-
             DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                expanded = expandedCountry,
+                onDismissRequest = { expandedCountry = false },
+                modifier = Modifier.width(with(LocalDensity.current) { countryTextFieldSize.width.toDp() })
             ) {
-                options.forEach { option ->
+                countries.forEach { option ->
                     DropdownMenuItem(
                         text = { Text(option) },
                         onClick = {
-                            selectedOptionText = option
-                            expanded = false
+                            selectedCountry = option
+                            expandedCountry = false
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // ✅ Role Dropdown
+        Box(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = selectedRole,
+                onValueChange = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        roleTextFieldSize = coordinates.size.toSize()
+                    }
+                    .clickable { expandedRole = true },
+                placeholder = { Text("Select Role") },
+                enabled = false,
+                colors = TextFieldDefaults.colors(
+                    disabledContainerColor = Color.White,
+                    disabledTextColor = Color.Black
+                ),
+                trailingIcon = { Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null) }
+            )
+            DropdownMenu(
+                expanded = expandedRole,
+                onDismissRequest = { expandedRole = false },
+                modifier = Modifier.width(with(LocalDensity.current) { roleTextFieldSize.width.toDp() })
+            ) {
+                roles.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedRole = option
+                            expandedRole = false
                         }
                     )
                 }
@@ -182,12 +207,8 @@ fun RegBody(innerPaddingValues: PaddingValues) {
         Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             value = password,
-            onValueChange = {
-                password = it
-            },
-            placeholder = {
-                Text("*******")
-            },
+            onValueChange = { password = it },
+            placeholder = { Text("*******") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(20.dp))
@@ -196,36 +217,31 @@ fun RegBody(innerPaddingValues: PaddingValues) {
             userViewModel.register(email,password){
                     success,message,userId ->
                 if (success){
-                    var userModel = UserModel(
-                        userId,email,
-                        firstName,lastname,
-                        "Male",
-                        selectedOptionText
+                    val userModel = UserModel(
+                        userId,
+                        email,
+                        firstName,
+                        lastname,
+                        "Male", // Assuming Male for now
+                        selectedCountry,
+                        selectedRole // ✅ Pass the selected role
                     )
-                    userViewModel.addUserToDatabase (userId,userModel){
-                            success, message ->
-                        if (success){
-                            Toast.makeText(context,message, Toast.LENGTH_LONG).show()
+                    userViewModel.addUserToDatabase(userId,userModel){
+                            successDb, messageDb ->
+                        if (successDb){
+                            Toast.makeText(context, "Registration Successful", Toast.LENGTH_LONG).show()
+                            activity?.finish() // Go back to login screen
                         }else{
-                            Toast.makeText(context,message, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, messageDb, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }else{
                     Toast.makeText(context,message, Toast.LENGTH_LONG).show()
-
                 }
-
             }
         },
             modifier = Modifier.fillMaxWidth()) {
             Text("Register")
         }
-
     }
-}
-
-@Preview
-@Composable
-fun RegPreview() {
-    RegBody(innerPaddingValues = PaddingValues(0.dp))
 }

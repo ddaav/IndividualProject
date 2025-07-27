@@ -7,5 +7,5 @@ data class UserModel(
     var lastName : String = "",
     var gender : String = "",
     var address : String = "",
-
+    var role: String = "Normal"
 )

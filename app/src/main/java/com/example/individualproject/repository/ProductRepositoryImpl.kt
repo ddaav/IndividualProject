@@ -88,13 +88,12 @@ class ProductRepositoryImpl : ProductRepository{
     }
 
     override fun updateProduct(
-        productId: String,
-        data: MutableMap<String, Any?>,
+        product: ProductModel,
         callback: (Boolean, String) -> Unit
     ) {
-        ref.child(productId).updateChildren(data).addOnCompleteListener{
+        ref.child(product.productId).setValue(product).addOnCompleteListener{
             if (it.isSuccessful){
-                callback(true,"product added successfully")
+                callback(true,"Product updated successfully")
             }else{
                 callback(false,"${it.exception?.message}")
             }

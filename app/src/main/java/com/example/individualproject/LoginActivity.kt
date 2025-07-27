@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -27,12 +28,14 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +54,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.individualproject.repository.UserRepositoryImpl
+import com.example.individualproject.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 
 class LoginActivity : ComponentActivity() {
@@ -69,9 +74,13 @@ fun LoginBody() {
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val activity = context as Activity
+
+    val repo = remember { UserRepositoryImpl() }
+    val viewModel = remember { UserViewModel(repo) }
 
     val sharedPreferences = context.getSharedPreferences("User", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
@@ -117,19 +126,14 @@ fun LoginBody() {
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
                 placeholder = { Text(text = "Enter email") },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Gray.copy(alpha = 0.2f),
-                    focusedIndicatorColor = Color.Green,
-                    unfocusedContainerColor = Color.Gray.copy(alpha = 0.2f),
-                    unfocusedIndicatorColor = Color.Blue
-                ),
                 shape = RoundedCornerShape(12.dp),
                 leadingIcon = {
                     Icon(Icons.Default.Email, contentDescription = null)
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email
-                )
+                ),
+                singleLine = true
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -141,12 +145,6 @@ fun LoginBody() {
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
                 placeholder = { Text(text = "Enter password") },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Gray.copy(alpha = 0.2f),
-                    focusedIndicatorColor = Color.Green,
-                    unfocusedContainerColor = Color.Gray.copy(alpha = 0.2f),
-                    unfocusedIndicatorColor = Color.Blue
-                ),
                 shape = RoundedCornerShape(12.dp),
                 leadingIcon = {
                     Icon(Icons.Default.Lock, contentDescription = null)
@@ -167,7 +165,8 @@ fun LoginBody() {
                 else PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password
-                )
+                ),
+                singleLine = true
             )
 
             Row(
@@ -188,65 +187,122 @@ fun LoginBody() {
                         checked = rememberMe,
                         onCheckedChange = { rememberMe = it }
                     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     Text("Remember me")
                 }
 
-                Text(
-                    "Forgot Password?",
-                    modifier = Modifier.clickable {
-                        // Handle forgot password
-                        Toast.makeText(context, "Forgot password clicked", Toast.LENGTH_SHORT).show()
+                TextButton(
+                    onClick = {
+                        val intent = Intent(context, ForgetPasswordActivity::class.java)
+                        context.startActivity(intent)
                     }
-                )
+                ) {
+                    Text("Forgot Password?")
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(
                 onClick = {
-                    if (email == "ram@gmail.com" && password == "password") {
-                        // Save credentials if remember me is checked
-                        if (rememberMe) {
-                            editor.putString("email", email)
-                            editor.putString("password", password)
-                            editor.apply()
+                    isLoading = true
+                    viewModel.login(email, password) { success, message ->
+                        isLoading = false
+                        if (success) {
+                            if (rememberMe) {
+                                editor.putString("email", email)
+                                editor.putString("password", password) // Note: storing password is not recommended
+                                editor.apply()
+                            } else {
+                                editor.clear()
+                                editor.apply()
+                            }
+
+                            Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
+                            val intent = Intent(context, DashboardActivity::class.java)
+                            context.startActivity(intent)
+                            activity.finish()
                         } else {
-                            // Clear saved credentials if remember me is unchecked
-                            editor.clear()
-                            editor.apply()
-                        }
-
-                        // Navigate to Dashboard (corrected navigation)
-                        val intent = Intent(context, DashboardActivity::class.java)
-                        intent.putExtra("email", email)
-                        context.startActivity(intent)
-                        activity.finish()
-
-                        Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
-                    } else {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("Invalid email or password")
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(message)
+                            }
                         }
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(50.dp)
                     .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(10.dp),
+                enabled = email.isNotBlank() && password.isNotBlank() && !isLoading
             ) {
-                Text("Login")
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = Color.White
+                    )
+                } else {
+                    Text("Login")
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                "Don't have an account? Sign up",
-                modifier = Modifier.clickable {
+            Row {
+                Text("Don't have an account?")
+                TextButton(onClick = {
                     val intent = Intent(context, RegistrationActivity::class.java)
                     context.startActivity(intent)
-                    activity.finish()
+                }) {
+                    Text("Sign up")
                 }
-            )
+            }
         }
     }
 }

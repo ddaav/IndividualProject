@@ -526,7 +526,7 @@ fun EditImageSelectionSection(
                 // Show new selected image or current image
                 val imageToShow = selectedImageUri ?: currentImageUrl
 
-                if (imageToShow != null && imageToShow.toString().isNotEmpty()) {
+                if (imageToShow.toString().isNotEmpty()) {
                     AsyncImage(
                         model = imageToShow,
                         contentDescription = "Product Image",
