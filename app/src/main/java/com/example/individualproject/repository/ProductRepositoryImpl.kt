@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.OpenableColumns
+import android.util.Log
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
 import com.example.individualproject.model.ProductModel
@@ -132,23 +133,30 @@ class ProductRepositoryImpl : ProductRepository{
 
     }
 
+
     override fun getAllProduct(callback: (Boolean, String, List<ProductModel?>) -> Unit) {
         ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
+                val allProducts = mutableListOf<ProductModel>()
                 if (snapshot.exists()){
-                    var allProducts = mutableListOf<ProductModel>()
                     for (eachProduct in snapshot.children){
-                        var products = eachProduct.getValue(ProductModel::class.java)
-                        if (products !=null){
-                            allProducts.add(products)
+                        try {
+                            val product = eachProduct.getValue(ProductModel::class.java)
+                            if (product != null){
+                                allProducts.add(product)
+                            }
+                        } catch (e: Exception) {
+                            Log.e("ProductRepository", "Failed to parse product: ${eachProduct.key}", e)
                         }
                     }
-                    callback(true,"product fetched", allProducts)
+                    callback(true, "Products fetched successfully.", allProducts)
+                } else {
+                    callback(true, "No products found.", emptyList())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                callback(false,error.message,emptyList())
+                callback(false, error.message, emptyList())
             }
         })
     }
